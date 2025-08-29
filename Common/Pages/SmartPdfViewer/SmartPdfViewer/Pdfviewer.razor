@@ -1,0 +1,19 @@
+﻿@using Syncfusion.Blazor.SmartPdfViewer;
+
+<div style="overflow:auto;height:@ViewerHeight;">
+    <SfSmartPdfViewer DocumentPath="wwwroot/data/smartpdfviewer/form_document.pdf" Width="100%" Height="640px">
+        <AssistViewSettings Enable="false"></AssistViewSettings>
+        <SmartRedactSettings Enable="false"></SmartRedactSettings>
+    </SfSmartPdfViewer>
+</div>
+
+@code{
+    #region Properties
+    [Parameter]
+    public bool IsMobileDevice { get; set; } = false;
+    [Parameter]
+    public bool RefreshContainer { get; set; } = false;
+    [Parameter]
+    public string ViewerHeight { get; set; } = "inherit";
+    #endregion
+}
