@@ -21,10 +21,13 @@ Clone the repository. This repository contains Blazor Server demos and Blazor WA
    
    To run .NET 8 Blazor Server Demos project
    > `dotnet run --project Blazor-Server-Demos/Blazor_Server_Demos_NET8.csproj`
+
    To run .NET 9 Blazor Server Demos project
    > `dotnet run --project Blazor-Server-Demos/Blazor_Server_Demos_NET9.csproj`
+
    To run .NET 8 Blazor WASM Demos project
    > `dotnet run --project Blazor-WASM-Demos/Blazor_WASM_Demos_NET8.csproj`
+   
    To run .NET 9 Blazor WASM Demos project
    > `dotnet run --project Blazor-WASM-Demos/Blazor_WASM_Demos_NET9.csproj`
 ### Run the demo using Visual Studio
