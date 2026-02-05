@@ -1,0 +1,392 @@
+#region Copyright Syncfusion Inc. 2001-2023.
+// Copyright Syncfusion Inc. 2001-2023. All rights reserved.
+// Use of this code is subject to the terms of our license.
+// A copy of the current license can be obtained at any time by e-mailing
+// licensing@syncfusion.com. Any infringement will be prosecuted under
+// applicable laws. 
+#endregion
+using BlazorDemos;
+using BlazorDemos.Pages.Viewer.PdfViewer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+namespace BlazorDemos
+{
+    internal partial class SampleConfig
+    {
+        public List<Sample> PDFViewer { get; set; } = new List<Sample>{
+            new Sample
+            {
+                Name = "Default Functionalities",
+                Category = "PDF Viewer",
+                Directory = "Viewer/PdfViewer",              
+                Url = "pdf-viewer/default-functionalities",
+                FileName = "DefaultFunctionalities.razor",
+                MetaTitle = "Blazor PDF Viewer Component | View PDF Documents | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Default Functionalities",
+                MetaDescription = "This Blazor PDF Viewer demo shows viewing, zooming, searching, navigating PDF documents. Easy document navigation with page thumbnails and integrated bookmarks."
+            },
+            new Sample
+            {
+                Name = "Read-Only",
+                Category = "Document Security",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/read-only",
+                FileName = "ReadOnly.razor",
+                MetaTitle = "Blazor PDF Viewer Read-Only Mode | Document Security | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Read-Only Mode",
+                MetaDescription = "Blazor PDF Viewer demo shows read-only mode for PDF documents. Prevent document modifications while allowing viewing and searching for secure document sharing."
+            },
+
+            new Sample
+            {
+                Name = "Document List",
+                Category = "File Management",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/document-list",
+                FileName = "DocumentList.razor",
+                MetaTitle = "Blazor PDF Viewer Document List | Multiple Files | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Document List Management",
+                MetaDescription = "This Blazor PDF Viewer demo shows managing multiple PDF documents with a document list. Switch between documents easily while maintaining viewer state."
+            },
+#if !WASM
+             new Sample
+            {
+                Name = "Multi-Format Viewer",
+                Category = "File Management",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/multi-format-viewer",
+                FileName = "MultiFormatViewer.razor",
+                MetaTitle = "Blazor Multi-Format Document Viewer | PDF & More | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Multi-Format Document Viewer",
+                MetaDescription = "Blazor PDF Viewer demo shows viewing multiple document formats beyond PDF. Support for various file types with consistent interface and navigation features.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="MultiFormatViewer",
+                        FileName="MultiFormatViewer.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="MultiFormatViewerCompanion",
+                        FileName="MultiFormatViewer.razor.js"
+                    },
+                }
+            },
+#endif
+             new Sample
+            {
+                Name = "File Attachment",
+                Category = "File Management",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/file-attachment",
+                FileName = "FileAttachment.razor",
+                MetaTitle = "Blazor PDF Viewer File Attachment | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - File Attachment",
+                MetaDescription = "This Blazor PDF Viewer demo shows how to embed, view, and manage file attachments within PDF documents, ensuring files remain bundled and accessible.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="FileAttachment",
+                        FileName="FileAttachment.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="FileAttachmentCompanion",
+                        FileName="FileAttachment.razor.js"
+                    },
+                }
+            },
+             new Sample
+            {
+                Name = "Organize Pages",
+                Category = "Editor",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/organize-pages",
+                FileName = "OrganizePages.razor",
+                MetaTitle = "Blazor PDF Viewer Page Organization | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Organize Pages",
+                MetaDescription = "Blazor PDF Viewer demo showcases page organization features, enabling users to insert, delete, rearrange, copy, import, undo, redo, and rotate pages.",
+                NotificationDescription = new string[]{ @"This page organization example demonstrates how to insert, delete, rearrange, copy, import, undo, redo, and rotate pages in a PDF document. It also allows selecting all pages for collective adjustments and saving or downloading the edited file instantly." },
+                Type = SampleType.New
+            },
+             new Sample
+            {
+                Name = "Redaction",
+                Category = "Editor",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/redaction",
+                FileName = "Redaction.razor",
+                MetaTitle = "Blazor PDF Viewer Redaction | Text & Image Removal | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Content Redaction",
+                MetaDescription = "This demo shows permanent redaction of sensitive information from PDF documents. Permanently remove text and images to protect confidential information."
+            },
+
+            new Sample
+            {
+                Name = "Custom Toolbar",
+                Category = "Toolbar",
+                Directory = "Viewer/PdfViewer",             
+                Url = "pdf-viewer/custom-toolbar",
+                FileName = "CustomToolbar.razor",
+                MetaTitle = "Blazor PDF Viewer Custom Toolbar | User Interface | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Custom Toolbar",
+                MetaDescription = "This Blazor PDF Viewer demo shows how to create a custom toolbar with annotation tools, shapes, stamps, signature capabilities for enhanced document handling.",
+                NotificationDescription = new string[]{ @"The custom toolbar demo has been updated with a new UI and additional functionalities, adding various annotations such as highlights, free text, shapes, stamps, drawings, and handwritten signatures. Users can also edit these annotations within the document." },
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="CustomToolBar",
+                        FileName="CustomToolbar.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolbarCompanion",
+                        FileName="CustomToolbar.razor.js"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolBarBase",
+                        FileName="CustomToolBarBase.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolBarAnnotationManagement",
+                        FileName="CustomToolBarAnnotationManagement.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolBarAction",
+                        FileName="CustomToolBarAction.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolBarSearchNavigation",
+                        FileName="CustomToolBarSearchNavigation.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="CustomToolBarImageUpload",
+                        FileName="CustomToolBarImageUpload.cs"
+                    }
+                }
+            },
+            new Sample
+            {
+                Name = "Primary Toolbar Customization",
+                Category = "Toolbar",
+                Directory = "Viewer/PdfViewer",             
+                Url = "pdf-viewer/primary-toolbar-customization",
+                MetaTitle = "PDF Viewer Primary Toolbar Customization - Syncfusion Demos",
+                FileName = "PrimaryToolbarCustomization.razor",
+                HeaderText = "Blazor PDF Viewer Example - Primary Toolbar Customization",
+                MetaDescription = "This example shows how to customize the primary toolbar with your own tools and UI. Add, remove, or modify toolbar items to match your application needs.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="PrimaryToolbarCustomization",
+                        FileName="PrimaryToolbarCustomization.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="PrimaryToolbarCustomizationCompanion",
+                        FileName="PrimaryToolbarCustomization.razor.js"
+                    },
+                }
+            },
+            new Sample
+            {
+                Name = "Form Filling",
+                Category = "PDF Form",
+                Directory = "Viewer/PdfViewer",              
+                Url = "pdf-viewer/form-filling",
+                FileName = "FormFilling.razor",
+                MetaTitle = "Blazor PDF Viewer Form Filling | Interactive Forms | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - PDF Form Filling",
+                MetaDescription = "This demo shows interactive PDF form filling capabilities. Complete, edit, save form fields including text boxes, checkboxes, radio buttons, and dropdown lists."
+            },
+            new Sample
+            {
+                Name = "Form Designer",
+                Category = "PDF Form",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/form-designer",
+                FileName = "FormDesigner.razor",
+                MetaTitle = "Blazor PDF Form Designer | Create & Edit Forms | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - PDF Form Designer",
+                MetaDescription = "This example shows creating and designing interactive PDF forms. Add form fields, configure properties, and generate forms for data collection and user input."
+            },
+            new Sample
+            {
+                Name = "eSigning Form Designer",
+                Category = "PDF Form",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/eSigning-form-designer",
+                FileName = "ESigningFormDesigner.razor",
+                MetaTitle = "Blazor PDF eSignature Form Designer | Digital Signing | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - eSigning Form Designer",
+                MetaDescription = "Blazor PDF Viewer demo shows creating forms with digital signature fields. Design forms ready for electronic signatures with customizable signature properties.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="ESigningFormDesigner",
+                        FileName="ESigningFormDesigner.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ESigningFormDesignerCompanion",
+                        FileName="ESigningFormDesigner.razor.js"
+                    },
+                }
+            },
+             new Sample
+            {
+                Name = "eSigning PDF Forms",
+                Category = "PDF Form",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/eSigning-pdf-forms",
+                FileName = "ESigningPdfForms.razor",
+                MetaTitle = "Blazor PDF Form eSigning | Digital Signatures | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - eSigning PDF Forms",
+                MetaDescription = "This Blazor PDF Viewer example shows digitally signing PDF forms with electronic signatures. Apply, validate, and manage signatures in interactive PDF forms.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="ESigningPdfForms",
+                        FileName="ESigningPdfForms.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ESigningPdfFormsCompanion",
+                        FileName="ESigningPdfForms.razor.js"
+                    },
+                }
+            },
+            new Sample
+            {
+                Name = "Annotations",
+                Category = "Annotation",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/annotations-toolbar",
+                FileName = "AnnotationsToolbar.razor",
+                MetaTitle = "Blazor PDF Viewer Annotations | Markup Tools | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - PDF Annotations",
+                MetaDescription = "This demo shows adding and managing annotations in PDF documents. Create highlights, comments, shapes, stamps, and other markup tools for document review.",
+                Type = SampleType.Updated
+            },
+            new Sample
+            {
+                Name = "Programmatic Operations",
+                Category = "Annotation",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/programmatical-annotations",
+                FileName = "ProgrammaticalAnnotations.razor",
+                MetaTitle = "Blazor PDF Viewer Programmatic Annotations | API Control | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Programmatic Annotation Control",
+                MetaDescription = "This demo shows programmatically adding and managing annotations. Control annotation properties through code for automated document markup and review processes.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="ProgrammaticalAnnotations",
+                        FileName="ProgrammaticalAnnotations.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ProgrammaticalAnnotationBase",
+                        FileName="ProgrammaticalAnnotationBase.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ProgrammaticalAnnotationEvent",
+                        FileName="ProgrammaticalAnnotationEvent.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ProgrammaticalAnnotationProperties",
+                        FileName="ProgrammaticalAnnotationProperties.cs"
+                    },
+                    new SourceCollection
+                    {
+                        Id="ProgrammaticalAnnotationUtil",
+                        FileName="ProgrammaticalAnnotationUtil.cs"
+                    }
+                }
+            },
+            new Sample
+            {
+                Name = "Handwritten Signature",
+                Category = "Signature",
+                Directory = "Viewer/PdfViewer",              
+                Url = "pdf-viewer/handwritten-signature",
+                FileName = "HandwrittenSignature.razor",
+                MetaTitle = "Blazor PDF Viewer Handwritten Signature | Sign Documents | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Handwritten Signature",
+                MetaDescription = "This Blazor PDF Viewer demo shows adding handwritten signatures to PDF documents. Create, place, manage ink signatures with customizable appearance settings."
+            },
+            new Sample
+            {
+                Name = "Accessible PDF Reading",
+                Category = "Accessibility",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/accessible-pdf-reading",
+                FileName = "AccessiblePdfReading.razor",
+                MetaTitle = "Blazor Accessible PDF Reading | Screen Reader & Read Aloud | Syncfusion",
+                HeaderText = "Blazor PDF Viewer Example - Accessible PDF Reading",
+                MetaDescription = "This Blazor PDF Viewer example adds a screen-reader friendly read-aloud experience with next/previous page navigation.",
+                NotificationDescription = new string[]{@"This accessible PDF reading example demonstrates how to enable screen-reader support and read-aloud functionality in a PDF Viewer. It provides intuitive navigation with next and previous page controls, ensuring an inclusive reading experience for users with visual impairments."},
+                Type = SampleType.New,
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="AccessiblePdfReading",
+                        FileName="AccessiblePdfReading.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="AccessiblePdfReadingCompanion",
+                        FileName="AccessiblePdfReading.razor.js"
+                    },
+                }
+            }
+#if !WASM
+            ,
+            new Sample
+            {
+                Name = "Invisible Digital Signature",
+                Category = "Signature",
+                Directory = "Viewer/PdfViewer",
+                Url = "pdf-viewer/invisible-digital-signature",
+                MetaTitle = "PDF Viewer Invisible Digital Signature - Syncfusion Demos",
+                FileName = "InvisibleDigitalSignature.razor",
+                HeaderText = "Blazor PDF Viewer Example - Invisible Digital Signature",
+                MetaDescription = "This demo shows adding cryptographic digital signature to PDF document. Apply secure, standard-compliant signatures without visible markings for authentication.",
+                SourceFiles = new List<SourceCollection>()
+                {
+                    new SourceCollection
+                    {
+                        Id="InvisibleDigitalSignature",
+                        FileName="InvisibleDigitalSignature.razor"
+                    },
+                    new SourceCollection
+                    {
+                        Id="InvisibleDigitalSignatureCompanion",
+                        FileName="InvisibleDigitalSignature.razor.js"
+                    },
+                }
+            }
+           
+#endif
+
+        };
+    };
+        
+    }

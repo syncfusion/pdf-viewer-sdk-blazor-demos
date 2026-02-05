@@ -1,0 +1,70 @@
+@page "/smart-pdf-viewer/smartredact"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.SmartPdfViewer
+@using Syncfusion.Blazor.SfPdfViewer
+
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
+
+@*End:Hidden*@
+
+<SampleDescription>
+    <p>
+        This sample showcases how the Syncfusion Blazor Smart PDF Viewer uses AI to intelligently identify and redact sensitive information.
+        Users can choose patterns such as emails or names, and the AI will detect and mark matching content for redaction.
+    </p>
+    <p>
+        Explore our <strong>Smart PDF Viewer demos</strong> with limited AI token usage directly in your browser. To try these features locally using your own API key, visit the
+        <a href="https://github.com/SyncfusionExamples/blazor-smart-pdf-viewer-examples" target="_blank" aria-label="Navigate to the Syncfusion Smart PDF Viewer Samples GitHub repository">
+            <strong>Syncfusion Smart PDF Viewer samples</strong>
+        </a> on GitHub.
+    </p>
+</SampleDescription>
+
+
+<ActionDescription>
+    <p>
+        <strong>Smart redaction:</strong> Select patterns such as emails or names to automatically identify sensitive information. The AI detects matching content, and you can review and deselect any items before applying redaction to ensure accurate protection.
+    </p>
+    <p>
+        <strong>Manual redaction:</strong> Manually select specific content for redaction to maintain precise control over which parts of the document are removed. This complements automated detection and ensures only intended information is redacted.
+    </p>
+    <p>More information about using the <strong>Smart PDF Viewer</strong> is available in this <a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/smart-pdf-viewer/blazor/smart-redaction" aria-label="Syncfusion documentation page about the Smart Redaction feature in Smart PDF Viewer">documentation section</a>.</p>
+</ActionDescription>
+
+@*Hidden:Lines*@
+<AINotification></AINotification>
+@*End:Hidden*@
+
+@*Hidden:Lines*@
+<AIToastNotification></AIToastNotification>
+@*End:Hidden*@
+
+@*Hidden:Lines*@
+<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="control-section">
+            @*End:Hidden*@
+            <SfSmartPdfViewer @ref="ViewerInstance" DocumentPath="@DocumentPath" DownloadFileName="SmartRedaction.pdf" Height="640px" Width="100%">
+                <AssistViewSettings Enable="false"> </AssistViewSettings>
+                <SmartFillSettings Enable="false"></SmartFillSettings>
+                <PdfViewerEvents DocumentLoaded="DocumentLoaded"></PdfViewerEvents>
+            </SfSmartPdfViewer>
+
+            @*Hidden:Lines*@
+        </div>
+    </div>
+</div>
+@*End:Hidden*@
+
+@code {
+    SfSmartPdfViewer? ViewerInstance { get; set; }
+    public string DocumentPath = "https://cdn.syncfusion.com/content/pdf/Confidential_Medical_Record.pdf";
+    private async void DocumentLoaded(LoadEventArgs args)
+    {
+        await ViewerInstance.ToggleItemByIndex(0);
+    }
+}

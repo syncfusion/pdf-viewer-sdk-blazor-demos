@@ -1,0 +1,104 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+  
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>13.0</LangVersion>
+    <RootNamespace>BlazorDemos</RootNamespace>
+    <EnableMSDeployAppOffline>true</EnableMSDeployAppOffline>
+    <DefineConstants>WASM</DefineConstants>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PagesFile Include="Pages/**" />
+  </ItemGroup>
+
+  <Target Name="ShipPages" BeforeTargets="BeforeBuild">
+    <Copy SourceFiles="@(PagesFile)" DestinationFiles="wwwroot\scripts\Pages\%(RecursiveDir)%(Filename)%(Extension).txt" />
+  </Target>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;NET10_0;$(SyncfusionLicensing);STAGING;WASM;WASM_NET10</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NET10_0;STAGING;WASM;WASM_NET10</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(STAGING)' != ''">
+    <DefineConstants>$(DefineConstants);STAGING;WASM_NET10</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ISSTAGING)' != ''">
+    <DefineConstants>$(DefineConstants);ISSTAGING;WASM_NET10</DefineConstants>
+  </PropertyGroup>
+  
+  <ItemGroup>
+	  <PackageReference Include="Syncfusion.Blazor.Cards" Version="32.2.3" />
+    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="32.2.3" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="32.2.3" />
+    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="32.2.3" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="32.2.3" />
+    <PackageReference Include="Syncfusion.Licensing" Version="32.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\SfResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SfResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SfResources.en-US.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\SfResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AssetMinifier\**" />
+    <Compile Remove="Controllers\**" />
+    <Compile Remove="Service\**" />
+    <Content Remove="AssetMinifier\**" />
+    <Content Remove="Controllers\**" />
+    <Content Remove="Service\**" />
+    <EmbeddedResource Remove="AssetMinifier\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <EmbeddedResource Remove="Service\**" />
+    <None Remove="AssetMinifier\**" />
+    <None Remove="Controllers\**" />
+    <None Remove="Service\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Content Remove="bin\**" />
+    <None Remove="bin\**" />
+    <Compile Remove="obj\**" />
+    <Content Remove="bin\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Viewer\PdfViewer\InvisibleDigitalSignature.razor" />
+    <Content Remove="Pages\Viewer\PdfViewer\MultiFormatViewer.razor" />
+    <Content Remove="Pages\SmartPdfViewer\SmartPdfViewer\SmartFill.razor" />
+    <Content Remove="Pages\SmartPdfViewer\SmartPdfViewer\SmartRedact.razor" />
+    <Content Remove="Pages\SmartPdfViewer\SmartPdfViewer\SmartSummarizer.razor" />
+    <Content Remove="Pages\SmartPdfViewer\SmartPdfViewer\Pdfviewer.razor" />
+    <None Remove="Pages\Viewer\PdfViewer\InvisibleDigitalSignature.razor.js" />
+    <None Remove="Pages\Viewer\PdfViewer\MultiFormatViewer.razor.js" />
+  </ItemGroup>
+
+</Project>
+  

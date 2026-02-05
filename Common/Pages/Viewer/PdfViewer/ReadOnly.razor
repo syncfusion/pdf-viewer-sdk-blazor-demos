@@ -1,0 +1,98 @@
+@page "/pdf-viewer/read-only"
+@using Syncfusion.Blazor.SfPdfViewer
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@*End:Hidden*@
+
+<SampleDescription>
+  <p>This sample demonstrates the PDF Viewer operating in read-only mode. In this mode, annotations cannot be edited, form fields are restricted from modification, and text selection is disabled. Use this configuration to prevent unintended changes while still allowing users to view the document content.</p>
+</SampleDescription>
+<ActionDescription>
+    <p>This sample runs the PDF Viewer in read-only mode to restrict edits and prevent text selection. Annotations are locked, and all form fields are set to read-only.</p>
+    @*WASM:Block*@ 
+    @{
+#if (WASM)
+    }
+<p>More information about the SfPdfViewer can be found in this <a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/web-assembly-application" aria-label="documentation section for View PDF files using PDF Viewer Component in the Blazor WASM app">documentation section</a>.</p>
+    @{
+#endif 
+    }
+    @*End:WASM*@
+
+    @*Server:Block*@ 
+    @{
+#if !(WASM)
+    }
+        <p>More information about the SfPdfViewer can be found in this <a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/server-side-application" aria-label="documentation section for View PDF files using PDF Viewer Component in the Blazor Server app">documentation section</a>.</p>
+    @{
+#endif 
+    }
+    @*End:Server*@ 
+</ActionDescription>
+
+<div class="control-section">
+     <SfPdfViewer2 @ref="PdfViewerInstance" DocumentPath="@DocumentPath" Height="90%" Width="100%" EnableTextSelection="false" EnableStickyNotesAnnotation=false EnableCommentPanel="false" AnnotationSettings="@AnnotationSettings" ToolbarSettings="@ToolbarSettings" ContextMenuSettings="@ContextMenuSettings" EnableFormDesigner = "true"  EnablePageOrganizer="false">
+        <PdfViewerEvents DocumentLoaded="OnDocumentLoad"></PdfViewerEvents>
+     </SfPdfViewer2>
+</div>
+
+@code {
+    SfPdfViewer2? PdfViewerInstance;
+
+    private async Task OnDocumentLoad(LoadEventArgs args)
+    {         
+        List<FormFieldInfo> fields = await PdfViewerInstance!.GetFormFieldsAsync();
+        for (int i = 0; i < fields.Count(); i++)
+        {
+            fields[i].IsReadOnly = true;  
+        }
+        await PdfViewerInstance.UpdateFormFieldsAsync(fields);   
+    }   
+    
+    PdfViewerAnnotationSettings AnnotationSettings = new PdfViewerAnnotationSettings()
+    {
+            IsLock = true
+    };
+    PdfViewerToolbarSettings ToolbarSettings = new PdfViewerToolbarSettings()
+    {
+        ToolbarItems = new List<ToolbarItem>()
+        {
+            ToolbarItem.OpenOption,
+            ToolbarItem.PageNavigationTool,
+            ToolbarItem.MagnificationTool,                    
+            ToolbarItem.PrintOption,
+        },
+        MobileToolbarItems = new List<MobileToolbarItem>()
+        {
+            MobileToolbarItem.Open,
+            MobileToolbarItem.Search
+        }
+    };
+
+    PdfViewerContextMenuSettings ContextMenuSettings = new PdfViewerContextMenuSettings()
+    {
+         EnableContextMenu = false
+    };
+
+  //Invokes while loading document in the PDFViewer.    
+    private string DocumentPath { get; set; } = string.Empty;
+    protected override void OnInitialized()
+    {        
+        string fileDataPath = NavigationManager.BaseUri + SampleService.WebAssetsPath;
+
+    @*Server:Block*@
+    #if !WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath = "wwwroot/data/pdfviewer/restricted-formfield.pdf";
+    #endif
+    @*End:Server*@
+
+    @*WebAssembly:Block*@    
+    #if WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath= fileDataPath + "data/pdfviewer/restricted-formfield.pdf";
+    #endif
+    @*End:WebAssembly*@
+    }
+}

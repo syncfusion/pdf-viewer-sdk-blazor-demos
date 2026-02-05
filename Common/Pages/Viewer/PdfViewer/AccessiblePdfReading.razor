@@ -1,0 +1,413 @@
+﻿@page "/pdf-viewer/accessible-pdf-reading"
+@using Syncfusion.Blazor.SfPdfViewer
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.SplitButtons
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@*End:Hidden*@
+@inject IJSRuntime JSRuntime
+
+<SampleDescription>
+    <p>
+        This sample demonstrates the accessible <b>Read Aloud</b> feature in the PDF Viewer control. It uses the
+        <b>Windows Speech Synthesis API</b> together with <b>Microsoft Edge’s screen reader</b> support to enable users to
+        listen to PDF content and control playback with familiar actions. The feature benefits users who prefer audio interaction, need hands‑free document review, or rely on screen
+        readers for improved accessibility.
+    </p>
+</SampleDescription>
+
+<ActionDescription>
+    <p>
+        The Read Aloud functionality enhances accessibility and convenience by allowing users to consume PDF documents through audio.
+    </p>
+    <p>Key capabilities demonstrated in this sample:</p>
+    <ul>
+        <li><b>Playback controls:</b> Play, Pause/Resume, Stop, and multiple voice selection.</li>
+        <li><b>Line navigation:</b> Move to the next or previous line on the current page.</li>
+        <li><b>Page navigation:</b> Navigate between pages; reading continues sequentially from the first to the last line of the page.</li>
+        <li><b>Read selection:</b> Select any text in the PDF and use Read Selection to read only that content.</li>
+    </ul>
+    <p>
+        For more information about accessibility features in the <code>SfPdfViewer</code>, see the
+        <a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/accessibility"
+           aria-label="Navigate to the accessibility documentation for the SfPdfViewer component">
+            documentation section.
+        </a>
+    </p>
+</ActionDescription>
+
+
+@*Hidden:Lines*@
+<!-- Hidden uploader used by the “Open File” toolbar button -->
+<div style="display:none">
+    <SfUploader @ref="uploadFiles" ID="UploadFiles" ShowFileList="false" AllowedExtensions=".pdf">
+        <UploaderEvents OnUploadStart="FileUploadSelected"></UploaderEvents>
+        <UploaderAsyncSettings SaveUrl="https://blazor.syncfusion.com/services/production/api/FileUploader/Save" RemoveUrl="https://blazor.syncfusion.com/services/production/api/FileUploader/Remove"></UploaderAsyncSettings>
+    </SfUploader>
+</div>
+@*End:Hidden*@
+<SfToolbar CssClass="e-read-aloud">
+    <ToolbarItems>
+        <!-- Open (only in initial state) -->
+        <ToolbarItem Align="ItemAlign.Left" Id="pdfviewer_open" TooltipText="Open File" PrefixIcon="e-icon e-folder" Visible="@(!isReadAloudMode)"></ToolbarItem>
+
+        <!-- Right: Read Aloud button (initial state) -->
+        <ToolbarItem Align="ItemAlign.Right" CssClass="e-pdfviewer-read" Visible="@(!isReadAloudMode)">
+            <Template>
+                <SfButton IsPrimary="true" IconCss="e-icons e-audio" Content="Read Aloud" OnClick="ActivateReadAloud"></SfButton>
+            </Template>
+        </ToolbarItem>
+
+        <!-- Left: device 'Back' button (active state on device) -->
+        <ToolbarItem Align="ItemAlign.Left" Visible="@(SampleService.IsDevice && isReadAloudMode)" PrefixIcon="e-icons e-arrow-left" CssClass="e-icon-btn" OnClick="DeactivateReadAloud"/>
+
+        <!-- Left: desktop title (active state on desktop) -->
+        <ToolbarItem Align="ItemAlign.Left" Visible="@(!SampleService.IsDevice && isReadAloudMode)">
+            <Template>
+                <SfButton CssClass="e-flat custom-black" IconCss="e-icons e-audio" Content="Read Aloud" Disabled="true" />
+            </Template>
+        </ToolbarItem>
+
+        <!-- Center: controls (active state) -->
+        <ToolbarItem Align="ItemAlign.Center" Visible="@isReadAloudMode" CssClass="e-flat" PrefixIcon="e-icons e-chevron-left" Disabled="@isPrevDisabled" OnClick="@(async () => await PreviousLine())" />
+            
+        <ToolbarItem Align="ItemAlign.Center" Visible="@isReadAloudMode" CssClass="e-flat" PrefixIcon="@(isPlaying ? "e-icons e-pause" : "e-icons e-play")" OnClick="TogglePlayPause" />
+            
+        <ToolbarItem Align="ItemAlign.Center" Visible="@isReadAloudMode" CssClass="e-flat" PrefixIcon="e-icons e-flat e-chevron-right" Disabled="@isNextDisabled" OnClick="@(async () => await NextLine())" />
+        <!-- Right: voice dropdown (active state) -->
+        <ToolbarItem Align="ItemAlign.Right" TooltipText="Select voice" Visible="@isReadAloudMode">
+            <Template>
+                <SfDropDownButton CssClass="e-flat e-shadow" IconCss="e-icon multi-voice-icon" Items="voiceItems">
+                    <DropDownButtonEvents ItemSelected="OnVoiceSelected"></DropDownButtonEvents>
+                </SfDropDownButton>
+            </Template>
+        </ToolbarItem>
+
+        <!-- Separator and Close (active state on desktop only) -->
+        <ToolbarItem Type="ItemType.Separator" Align="ItemAlign.Right" Visible="@(!SampleService.IsDevice && isReadAloudMode)"></ToolbarItem>
+        <ToolbarItem Align="ItemAlign.Right" CssClass="e-pdfviewer-read" Visible="@(!SampleService.IsDevice && isReadAloudMode)">
+            <Template>
+                <SfButton CssClass="e-outline" Content="Close" OnClick="DeactivateReadAloud" />
+            </Template>
+        </ToolbarItem>
+    </ToolbarItems>
+</SfToolbar>
+<!-- PDF Viewer without built-in toolbar -->
+<SfPdfViewer2 @ref="PdfViewer" DocumentPath="@DocumentPath" EnableToolbar="false" EnableAnnotationToolbar="false"
+              EnableNavigationPanel="false" EnableNavigationToolbar="false" EnableFormDesigner="false"
+              EnableCommentPanel="false" Height="640px" Width="100%">
+              <PdfViewerContextMenuSettings EnableContextMenu="false"></PdfViewerContextMenuSettings>
+    <PdfViewerEvents DocumentUnloaded="OnDocumentUnloaded" DocumentLoaded="OnDocumentLoaded"
+                     ZoomChanged="UpdateElement" PageChanged="OnPageChanged" OnTextSelectionEnd="OnTextSelectionEnd" />
+</SfPdfViewer2>
+
+@code
+{
+    // Viewer
+    private SfPdfViewer2? PdfViewer;
+    private string DocumentPath = "https://cdn.syncfusion.com/content/pdf/programmatical-annotations.pdf";
+
+    // Uploader ref
+    internal SfUploader? uploadFiles;
+
+    // Voice dropdown state
+    private string? selectedVoiceURI;
+    private string? defaultVoiceURI;
+    private List<DropDownMenuItem> voiceItems = new();
+
+    // Toolbar/UI state
+    private bool isReadAloudMode;
+    private bool isPlaying;
+    private bool isPrevDisabled = true;
+    private bool isNextDisabled = true;
+
+    // Reading state
+    private int currentLineIndex = 0;
+    private int CurrentPage = 1;
+    private bool ReadNextPage;
+    private bool ReadPreviousPage;
+    private bool isHighligted;
+    // voice list type
+    public class VoiceOption
+    {
+        public string Name { get; set; } = "";
+        public string Lang { get; set; } = "";
+        public string VoiceURI { get; set; } = "";
+        public bool Default { get; set; }
+
+        public string Display => $"{Name} - {Lang}";
+    }
+
+    // JS interop
+    private IJSObjectReference? module;
+    // Reference for .NET object to call from JS
+    private DotNetObjectReference<AccessiblePdfReading>? objRef;
+
+    // Initialize .NET object reference for JS interop
+    protected override void OnInitialized()
+    {
+        objRef = DotNetObjectReference.Create(this);
+    }
+
+    // After first render, load JS module and initialize voices
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string jsPath = $"./{SampleService.AssetsPath}Pages/Viewer/PdfViewer/AccessiblePdfReading.razor.js";
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", jsPath);
+            await module!.InvokeVoidAsync("registerDotNetObject", objRef);
+
+            // Get voices from JS
+            List<VoiceOption> voices = await module.InvokeAsync<List<VoiceOption>>("getVoices");
+            List<VoiceOption> filtered = voices.OrderByDescending(v => v.Default).ThenBy(v => v.Name).ToList();
+
+            // In device mode, show only up to 5 items
+            List<VoiceOption> display = SampleService.IsDevice ? filtered.Take(5).ToList(): filtered;
+
+            // Build DropDown items only from the displayed subset
+            voiceItems = display.Select(v => new DropDownMenuItem
+            {
+                Text = v.Display,
+                Id = v.VoiceURI,
+                IconCss = v.Default ? "e-icons e-check" : null
+            }).ToList();
+            selectedVoiceURI = display.FirstOrDefault()?.VoiceURI;
+            defaultVoiceURI = selectedVoiceURI;
+
+#if WASM
+        if (SampleService.IsDevice)
+        {
+            StateHasChanged();
+        }
+#endif
+        }
+    }
+
+    // Loads selected PDF into the viewer (client-side)
+    public async Task FileUploadSelected(UploadingEventArgs args)
+    {
+        if (args.FileData.Type?.Equals("pdf", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            string base64 = args.FileData.RawFile!.ToString()!;
+            await PdfViewer!.LoadAsync(base64, null!);
+            await uploadFiles!.ClearAllAsync();
+        }
+    }
+
+    // Called when PDF document is loaded
+    private async Task OnDocumentLoaded()
+    {
+        await module!.InvokeVoidAsync("initPdfAccessibility");
+        isNextDisabled = false;
+        currentLineIndex = 0;
+        CurrentPage = PdfViewer!.CurrentPageNumber;
+
+    }
+
+    // Activate Read Aloud mode
+    private void ActivateReadAloud()
+    {
+        isReadAloudMode = true;
+    }
+
+    // Deactivate Read Aloud mode and reset related states
+    private async Task DeactivateReadAloud()
+    {
+        isReadAloudMode = false;
+        await OnDocumentUnloaded();
+        selectedVoiceURI = defaultVoiceURI;
+        ResetVoiceItems();
+        isNextDisabled = false;
+    }
+
+    // Handles page change events
+    private async Task OnPageChanged()
+    {
+        if (ReadNextPage)
+        {
+            currentLineIndex = 0;
+            await NextLine();
+            ReadNextPage = false;
+        }
+        else if (ReadPreviousPage)
+        {
+            await PreviousLine(true);
+            ReadPreviousPage = false;
+        }
+    }
+
+    // Updates highlight box based on zoom and current line
+    private async Task UpdateElement()
+    {
+        double? zoom = PdfViewer?.ZoomValue / 100.0;
+        await module!.InvokeVoidAsync("updateHighlightBox", PdfViewer?.CurrentPageNumber - 1, currentLineIndex - 1, zoom);
+    }
+
+    // Update selected voice from menu selection and notify JS module
+    private async Task OnVoiceSelected(MenuEventArgs args)
+    {
+        selectedVoiceURI = args.Item.Id;
+        ResetVoiceItems();
+        if (module is not null)
+            await module.InvokeVoidAsync("cancelReading");
+        ResetPlayButton();
+    }
+
+    // Reads the previous line or navigates to the previous page
+    private async Task PreviousLine(bool isPreviousPage = false)
+    {
+        if (currentLineIndex > 0 || isPreviousPage)
+        {
+            if (CurrentPage != PdfViewer!.CurrentPageNumber && !ReadPreviousPage)
+                await PdfViewer.GoToPageAsync(CurrentPage);
+            else
+                CurrentPage = PdfViewer.CurrentPageNumber;
+
+            currentLineIndex--;
+            await module!.InvokeVoidAsync("readLineFromPage", CurrentPage - 1, currentLineIndex - 1, isPreviousPage, selectedVoiceURI);
+
+            if (isPreviousPage)
+                currentLineIndex = await module!.InvokeAsync<int>("updateLineIndex", CurrentPage - 1);
+            isHighligted = true;
+            isPlaying = true;
+        }
+
+        isPrevDisabled = currentLineIndex < 1 && isPreviousPage;
+        isNextDisabled = false;
+    }
+
+    // Reads the next line in the PDF
+    private async Task NextLine()
+    {
+        if (CurrentPage != PdfViewer!.CurrentPageNumber && !ReadNextPage)
+            await PdfViewer.GoToPageAsync(CurrentPage);
+        else
+            CurrentPage = PdfViewer.CurrentPageNumber;
+
+        currentLineIndex++;
+        await module!.InvokeVoidAsync("readLineFromPage", CurrentPage - 1, currentLineIndex - 1, false, selectedVoiceURI);
+
+        isPrevDisabled = currentLineIndex < 1;
+        isNextDisabled = false;
+        isHighligted = true;
+        isPlaying = true;
+    }
+
+    // Toggle play/pause state for Read Aloud
+    private async Task TogglePlayPause()
+    {
+        isPlaying = !isPlaying;
+        if (!isHighligted)
+            await NextLine();
+        else
+            await module!.InvokeVoidAsync("readAloudMute", isPlaying);
+    }
+
+    // Reads selected text aloud
+    private async Task OnTextSelectionEnd(TextSelectionEndEventArgs args)
+    {
+        if (isReadAloudMode)
+        {
+            isPlaying = true;
+            isHighligted = true;
+            double? zoom = PdfViewer?.ZoomValue / 100.0;
+            await module!.InvokeVoidAsync("readSelectedText", args, zoom, selectedVoiceURI);
+        }
+    }
+
+    // Update voice menu items to show check icon for the selected voice
+    private void ResetVoiceItems()
+    {
+        foreach (DropDownMenuItem item in voiceItems)
+            item.IconCss = item.Id == selectedVoiceURI ? "e-icons e-check" : null;
+    }
+
+    // Reset play button state when invoked from JavaScript
+    [JSInvokable]
+    public void ResetPlayButton()
+    {
+        isPlaying = false;
+        isHighligted = false;
+        StateHasChanged();
+    }
+
+    // Navigates to the next page
+    [JSInvokable]
+    public async Task GoNextPage()
+    {
+        if (PdfViewer!.CurrentPageNumber == PdfViewer.PageCount)
+            await PdfViewer.GoToFirstPageAsync();
+        else
+            await PdfViewer.GoToNextPageAsync();
+
+        ReadNextPage = true;
+    }
+
+    // Navigates to the previous page
+    [JSInvokable]
+    public async Task GoPreviousPage()
+    {
+        if (PdfViewer!.CurrentPageNumber == 1)
+            await PdfViewer.GoToLastPageAsync();
+        else
+            await PdfViewer.GoToPreviousPageAsync();
+
+        ReadPreviousPage = true;
+    }
+
+    // Cleanup state when document is unloaded
+    private async Task OnDocumentUnloaded()
+    {
+        await module!.InvokeVoidAsync("cancelReading");
+        CurrentPage = 1;
+        currentLineIndex = 0;
+        isPlaying = false;
+        isHighligted = false;
+        isPrevDisabled = true;
+        isNextDisabled = true;
+    }
+
+    // Dispose JS module and object references
+    public async ValueTask DisposeAsync()
+    {
+        if (module is not null) await module.DisposeAsync();
+        objRef?.Dispose();
+    }
+}
+<style>
+    .custom-black {
+        color: var(--color-sf-content-text-color) !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    @*Hidden:Lines*@
+    .e-read-aloud{
+        padding: 8px 12px 8px 12px !important;
+    }
+    .e-read-aloud .e-shadow {
+        box-shadow: none !important;
+    }
+    .e-pdfviewer-read {
+        padding-right: 12px !important;
+    }
+    .multi-voice-icon:before {
+        content: "\e900";
+        font-size: 25px !important;
+        font-weight: 400 !important;
+        font-family: 'Multivoice_icons' !important;
+    }
+
+    @@font-face {
+        font-family: 'Multivoice_icons';
+        src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMg8SBSoAAAC8AAAAYGNtYXAXVtKHAAABHAAAAFRnYXNwAAAAEAAAAXAAAAAIZ2x5Zisw0ysAAAF4AAABrGhlYWQtkVjlAAADJAAAADZoaGVhB4QDxgAAA1wAAAAkaG10eAoAAAAAAAOAAAAAFGxvY2EAKADqAAADlAAAAAxtYXhwAA8AjgAAA6AAAAAgbmFtZZlKCfsAAAPAAAABhnBvc3QAAwAAAAAFSAAAACAAAwMAAZAABQAAApkCzAAAAI8CmQLMAAAB6wAzAQkAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADpAAPA/8AAQAPAAEAAAAABAAAAAAAAAAAAAAAgAAAAAAADAAAAAwAAABwAAQADAAAAHAADAAEAAAAcAAQAOAAAAAoACAACAAIAAQAg6QD//f//AAAAAAAg6QD//f//AAH/4xcEAAMAAQAAAAAAAAAAAAAAAQAB//8ADwABAAD/wAAAA8AAAgAANzkBAAAAAAEAAP/AAAADwAACAAA3OQEAAAAAAQAA/8AAAAPAAAIAADc5AQAAAAAJAAD/wAPCA8AACwAXADYARABSAGAAbgB8AIsAAAEyFhUUBiMiJjU0NjciBhUUFjMyNjU0JhMiJj0BNCYrASIGHQEUBiMiJj0BNDY7ATIWHQEUBiMBIiY9ATQ2MzIWHQEUBgciJj0BNDYzMhYdARQGByImPQE0NjMyFh0BFAYHIiY1ETQ2MzIWFREUBiciJj0BNDYzMhYdARQGJyImPQE0NjMyFh0BFAYjASkhLi4hIS4uITRJSTQ0SUmVCQ4yKagqQQ4JCg5dPag7Tg4JAb0JCgoJCgkJYwkODgkKDg5oCQ4OCQoODmcKDg4KCQ4OXgkODgkKDg5nCg4OCgkODgkChS4hIS4uISEuLkk0NElJNDRJ/c4OCVUoMTInVQkODglVOk5OOlUJDgGRDQouCg0NCi4JDi4NCpEJDg4JkQkOIQ0K0goNDQrSCQ5BDQkBTwoNDQn+sQoNVQ0KqwkODgmrCg0hDQpiCg0NCmIKDQAAAAEAAAAAAADpz+/zXw889QALBAAAAAAA5ViKNAAAAADlWIo0AAD/wAPCA8AAAAAIAAIAAAAAAAAAAQAAA8D/wAAABAAAAAAAA8IAAQAAAAAAAAAAAAAAAAAAAAUEAAAAAAAAAAAAAAACAAAABAAAAAAAAAAACgAUAB4A1gABAAAABQCMAAkAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAADgCuAAEAAAAAAAEABwAAAAEAAAAAAAIABwBgAAEAAAAAAAMABwA2AAEAAAAAAAQABwB1AAEAAAAAAAUACwAVAAEAAAAAAAYABwBLAAEAAAAAAAoAGgCKAAMAAQQJAAEADgAHAAMAAQQJAAIADgBnAAMAAQQJAAMADgA9AAMAAQQJAAQADgB8AAMAAQQJAAUAFgAgAAMAAQQJAAYADgBSAAMAAQQJAAoANACkaWNvbW9vbgBpAGMAbwBtAG8AbwBuVmVyc2lvbiAxLjAAVgBlAHIAcwBpAG8AbgAgADEALgAwaWNvbW9vbgBpAGMAbwBtAG8AbwBuaWNvbW9vbgBpAGMAbwBtAG8AbwBuUmVndWxhcgBSAGUAZwB1AGwAYQByaWNvbW9vbgBpAGMAbwBtAG8AbwBuRm9udCBnZW5lcmF0ZWQgYnkgSWNvTW9vbi4ARgBvAG4AdAAgAGcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAuAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @*End:Hidden*@
+</style>

@@ -1,0 +1,547 @@
+@page "/pdf-viewer/eSigning-form-designer"
+
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.SfPdfViewer
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using System.Text.Json;
+@inject IJSRuntime JSRuntime
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@*End:Hidden*@
+<SampleDescription>
+    <p>This sample demonstrates how to use the PDF Viewer Form Designer in Blazor to create a fillable PDF form with signature capabilities for two users. Use the user selector dropdown to switch between authors and add form fields that are uniquely styled with different background colors for easy identification.</p>
+</SampleDescription>
+<ActionDescription>
+    <p>Learn more in the <a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/form-designer/overview">Syncfusion documentation</a>.</p>
+</ActionDescription>
+<div class="e-pv-e-sign-control control-section">
+    <div class="content-wrapper">
+        @*Hidden:Lines*@ 
+        @if (SampleService.IsDevice) {
+            <SfToolbar Id="e-pv-e-sign-toolbar_template" Width="100%" Height="48px">
+                <ToolbarItems>
+                    <ToolbarItem Align="ItemAlign.Left" Type="ItemType.Input">
+                        <Template>
+                            <div id='e-pv-e-sign-user-field-mob' style='width: 190px; right: 4px;'>
+                                <!-- User Dropdown -->
+                                <div class="e-pv-e-sign-user-dropdown" style="width: 190px;">
+                                    <SfDropDownList TValue="string" TItem="EmployeeData"
+                                    CssClass="template"
+                                    DataSource="@Data"
+                                    Width="210px"
+                                    @bind-Value="@dropdownValue">
+                                        <DropDownListEvents TItem="EmployeeData" TValue="string" OnValueSelect="@OnUserSelected"></DropDownListEvents>
+                                        <DropDownListFieldSettings Value="FirstName"></DropDownListFieldSettings>
+                                        <DropDownListTemplates TItem="EmployeeData">
+                                            <ItemTemplate Context="employee">
+                                                <div style="display: flex;">
+                                                    <img class="e-pv-e-sign-empImage"
+                                                    style=@($"border: 1px solid {employee.Color}; margin: 10px 0px 0px 12px; border-radius: 50%;")
+                                                    src="@employee.ImagePath"
+                                                    alt="employee" />
+                                                    <div style="display: flex; flex-direction: column;">
+                                                        <div class="ename" style="font-size:13px; height:18px;">@employee.FirstName</div>
+                                                        <div class="mail" style="font-size:10px;">@employee.Email</div>
+                                                    </div>
+                                                </div>
+                                            </ItemTemplate>
+                                            <ValueTemplate Context="employee">
+                                                <div style="display:flex;">
+                                                    <img class="value"
+                                                    style=@($"border: 1px solid {employee.Color}; margin: 5px 0px 0px 7px; border-radius: 50%;")
+                                                    src="@employee.ImagePath"
+                                                    height="32" width="32"
+                                                    alt="employee" />
+                                                    <div style="margin-top: 3px;">
+                                                        <div class="name" style="font-size:13px;margin-left: 12px;">@employee.FirstName</div>
+                                                        <div class="mail" style="font-size:10px;margin-left: 12px;">@employee.Email</div>
+                                                    </div>
+                                                </div>
+                                            </ValueTemplate>
+                                        </DropDownListTemplates>
+                                    </SfDropDownList>
+                                </div>
+                            </div>
+                        </Template>
+                    </ToolbarItem>
+                    <ToolbarItem Align="ItemAlign.Right" PrefixIcon="e-icons e-download" CssClass="e-download" OnClick="Download"></ToolbarItem>
+                </ToolbarItems>
+            </SfToolbar>
+            <div id="e-pv-e-sign-layout" style="position: relative; display: flex;">
+                <div id="pdf-viewer-mob">
+                    <SfPdfViewer2 @ref="Viewer" DocumentPath="@DocumentPath"
+                    Height="100%"
+                    Width="100%"
+                    EnableToolbar="false"
+                    EnableAnnotationToolbar="false"
+                    EnableNavigationToolbar="false"
+                    EnableTextSelection = "false"
+                    IsDesignerMode="true"
+                    ZoomMode="ZoomMode.FitToPage">
+                        <PdfViewerEvents DocumentLoaded="OnDocumentLoaded" OnPageClick="onPageClick"/>
+                        <PdfViewerToolbarSettings FormDesignerToolbarItems="null"></PdfViewerToolbarSettings>
+                        <FormFieldSettings BackgroundColor="@BgColor"></FormFieldSettings>
+                    </SfPdfViewer2>
+                </div>
+            </div>
+            <SfToolbar Id="e-pv-e-sign-toolbar_template" Width="100%" Height="48px">
+                <ToolbarItems>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="signature-btn" PrefixIcon="e-icons e-signature"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="button-field" PrefixIcon="e-icons e-button-field"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="textbox-field" PrefixIcon="e-icons e-text-form"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="password-field" PrefixIcon="e-icons e-password"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="checkbox-field" PrefixIcon="e-icons e-check-box"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="radio-field" PrefixIcon="e-icons e-radio-button"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="dropdown-field" PrefixIcon="e-icons e-drop-down"></ToolbarItem>
+                    <ToolbarItem CssClass="e-pv-e-sign-form-field-property e-pv-fields" id="listbox-field" PrefixIcon="e-icons e-list-unordered"></ToolbarItem>
+                </ToolbarItems>
+            </SfToolbar>
+        }
+        else
+        {
+            @*End:Hidden*@ 
+            <SfToolbar Id="e-pv-e-sign-toolbar_template" Width="100%" Height="48px">
+                <ToolbarItems>
+                    <ToolbarItem Align="ItemAlign.Right">
+                        <Template>
+                            <SfButton id="e-pv-e-sign-download" CssClass="e-outline" IconCss="e-icons e-download" OnClick="Download">Download</SfButton>
+                        </Template>
+                    </ToolbarItem>
+                </ToolbarItems>
+            </SfToolbar>
+            <div id="e-pv-e-sign-layout" style="position: relative; display: flex;">
+                <SfSidebar Id="e-pv-e-sign-defaultSidebar_user" Width="200px" ZIndex="998" EnableGestures="false">
+                    <div class="content-wrapper" style="margin: 9px;">
+                        <div style="font-weight: 500; font-size: 16px; width: 43px; height: 24px; margin: 15px 10px 5px;">
+                            Fields
+                        </div>
+                        <div id='e-pv-e-sign-user-field' style='width: 190px; right: 4px;'>
+                            <!-- User Dropdown -->
+                            <div class="e-pv-e-sign-user-dropdown" style="width: 190px;">
+                                <SfDropDownList TValue="string" TItem="EmployeeData"
+                                CssClass="template"
+                                DataSource="@Data"
+                                @bind-Value="@dropdownValue">
+                                    <DropDownListEvents TItem="EmployeeData" TValue="string" OnValueSelect="@OnUserSelected"></DropDownListEvents>
+                                    <DropDownListFieldSettings Value="FirstName"></DropDownListFieldSettings>
+                                    <DropDownListTemplates TItem="EmployeeData">
+                                        <ItemTemplate Context="employee">
+                                            <div style="display: flex;">
+                                                <img class="e-pv-e-sign-empImage"
+                                                style=@($"border: 1px solid {employee.Color}; margin: 10px 0px 0px 12px; border-radius: 50%;")
+                                                src="@employee.ImagePath"
+                                                alt="employee" />
+                                                <div style="display: flex; flex-direction: column;">
+                                                    <div class="ename" style="font-size:13px; height:18px;font-weight:400;">@employee.FirstName</div>
+                                                    <div class="mail" style="font-size:10px;margin-top: 2px;">@employee.Email</div>
+                                                </div>
+                                            </div>
+                                        </ItemTemplate>
+                                        <ValueTemplate Context="employee">
+                                            <div style="display:flex;">
+                                                <img class="value"
+                                                style=@($"border: 1px solid {employee.Color}; margin: 5px 0px 0px 7px; border-radius: 50%;")
+                                                src="@employee.ImagePath"
+                                                height="32" width="32"
+                                                alt="employee" />
+                                                <div style="margin-top: 3px;">
+                                                    <div class="name" style="font-size:13px;margin-left: 12px;font-weight:400;">@employee.FirstName</div>
+                                                    <div class="mail" style="font-size:10px;margin-left: 12px;margin-top: 2px;">@employee.Email</div>
+                                                </div>
+                                            </div>
+                                        </ValueTemplate>
+                                    </DropDownListTemplates>
+                                </SfDropDownList>
+                            </div>
+                        </div>
+                        <div style="display:flex">
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="signature-btn">
+                                <i class="e-icons e-signature"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Signature</span>
+                            </SfButton>
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="button-field">
+                                <i class="e-icons e-button-field"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Button</span>
+                            </SfButton>
+                        </div>
+                        <div style="display:flex">
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="textbox-field">
+                                <i class="e-icons e-text-form"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Textbox</span>
+                            </SfButton>
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="password-field">
+                                <i class="e-icons e-password"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Password</span>
+                            </SfButton>
+                        </div>
+                        <div style="display:flex">
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="checkbox-field">
+                                <i class="e-icons e-check-box"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Checkbox</span>
+                            </SfButton>
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="radio-field">
+                                <i class="e-icons e-radio-button"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Radio</span>
+                            </SfButton>
+                        </div>
+                        <div style="display:flex">
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="dropdown-field">
+                                <i class="e-icons e-drop-down"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">Dropdown</span>
+                            </SfButton>
+                            <SfButton CssClass="e-pv-e-sign-form-field-property e-pv-e-sign-property e-outline" id="listbox-field">
+                                <i class="e-icons e-list-unordered"></i>
+                                <span style="font-size: 11px; margin-top: 6px;">List box</span>
+                            </SfButton>
+                        </div>
+                    </div>
+                </SfSidebar>
+                <div id="pdf-viewer">
+                    <SfPdfViewer2 @ref="Viewer" DocumentPath="@DocumentPath"
+                    Height="100%"
+                    Width="100%"
+                    EnableToolbar="false"
+                    EnableAnnotationToolbar="false"
+                    EnableNavigationToolbar="false"
+                    EnableTextSelection = "false"
+                    IsDesignerMode="true"
+                    ZoomMode="ZoomMode.FitToPage">
+                        <PdfViewerEvents DocumentLoaded="OnDocumentLoaded" OnPageClick="onPageClick"/>
+                        <PdfViewerToolbarSettings FormDesignerToolbarItems="null"></PdfViewerToolbarSettings>
+                        <FormFieldSettings BackgroundColor="@BgColor"></FormFieldSettings>
+                    </SfPdfViewer2>
+                </div>
+            </div>
+        @*Hidden:Lines*@ 
+        }
+        @*End:Hidden*@ 
+    </div>
+</div>
+
+
+@code {
+    SfPdfViewer2? Viewer;
+    private string DocumentPath { get; set; } = "https://cdn.syncfusion.com/content/PDFViewer/Fill+and+Sign.pdf";
+    private string CurrentFormFieldType = string.Empty;
+    private bool IsFieldDropped = false;
+    private Dictionary<int, System.Drawing.SizeF> PageData { get; set; }
+    private string dropdownValue = "Andrew Fuller";
+    private string BgColor { get; set; }= "#ffefef";
+    // Mention the name of razor file <ESigningFormDesigner>
+    private DotNetObjectReference<ESigningFormDesigner>? dotnetObjectRef { get; set; }
+    private IJSObjectReference? module;
+    protected override void OnInitialized()
+    {
+        dotnetObjectRef = DotNetObjectReference.Create(this);
+        string fileDataPath = NavigationManager.BaseUri + SampleService.WebAssetsPath;
+        
+@*Server:Block*@
+#if !WASM
+        foreach (EmployeeData employee in Data)
+        {
+            employee.ImagePath = $"images/pdfviewer/profile{employee.Eimg}.png";
+        }
+#endif
+@*End:Server*@
+
+@*WebAssembly:Block*@
+#if WASM
+        foreach (EmployeeData employee in Data)
+        {
+            employee.ImagePath = $"{fileDataPath}images/pdfviewer/profile{employee.Eimg}.png";
+        }
+#endif
+@*End:WebAssembly*@
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string jsPath = $"./{SampleService.AssetsPath}Pages/Viewer/PdfViewer/ESigningFormDesigner.razor.js";
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", jsPath);
+            //Replace with your js file path. For Example: "./Components/Pages/ESigningFormDesigner.razor.js".
+            await module.InvokeVoidAsync("getInstance", dotnetObjectRef);
+            @*Hidden:Lines*@
+#if WASM
+            if (SampleService.IsDevice)
+            {
+                StateHasChanged();
+            }
+#endif
+            @*End:Hidden*@
+        } 
+    }
+    [JSInvokable]
+    public void UpdateSetMode(bool IsTouch, string fieldType) {
+        if (IsTouch && Viewer!= null) {
+            switch (fieldType)
+            {
+                case "signature-btn":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.SignatureField);
+                    break;
+                case "button-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.Button);
+                    break;
+                case "textbox-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.Textbox);
+                    break;
+                case "password-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.Password);
+                    break;
+                case "checkbox-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.CheckBox);
+                    break;
+                case "radio-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.RadioButton);
+                    break;
+                case "dropdown-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.DropDown);
+                    break;
+                case "listbox-field":
+                    Viewer.SetFormDrawingModeAsync(FormFieldType.ListBox);
+                    break;
+            }
+        }
+    }
+    public void Dispose()
+    {
+        if (module != null)
+        {
+            module.InvokeVoidAsync("disposeDotnetTooltipRef");
+        }
+        dotnetObjectRef?.Dispose();
+    }
+
+    private async Task OnUserSelected(SelectEventArgs<EmployeeData> args) {
+        BgColor = args.ItemData.FirstName == "Andrew Fuller" ? "#ffefef" : "#eff7ef";;
+    }
+
+    private class EmployeeData
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Eimg { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+        public string? ImagePath{get; set;}
+    }
+    private async void onPageClick(PageClickEventArgs args)
+    {
+
+        if (Viewer != null && IsFieldDropped)
+        {
+            double x = args.PageX;
+            double y = args.PageY;
+            List<FormFieldInfo> formFields = new List<FormFieldInfo>();
+            FormFieldInfo field = new FormFieldInfo();
+            Bound bound = new Bound();
+            int PageWidth = (int)Math.Round(PageData[args.PageNumber - 1].Width);
+            switch (CurrentFormFieldType)
+            {
+                case "signature-btn":
+                    field.Type = FormFieldType.SignatureField;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 66 };
+                    break;
+                case "button-field":
+                    field.Type = FormFieldType.Button;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 40 };
+                    break;
+                case "textbox-field":
+                    field.Type = FormFieldType.Textbox;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 24 };
+                    break;
+                case "password-field":
+                    field.Type = FormFieldType.Password;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 24 };
+                    break;
+                case "checkbox-field":
+                    field.Type = FormFieldType.CheckBox;
+                    bound = new Bound() { X = x, Y = y, Width = 20, Height = 20 };
+                    break;
+                case "radio-field":
+                    field.Type = FormFieldType.RadioButton;
+                    bound = new Bound() { X = x, Y = y, Width = 20, Height = 20 };
+                    break;
+                case "dropdown-field":
+                    field.Type = FormFieldType.DropDown;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 24 };
+                    break;
+                case "listbox-field":
+                    field.Type = FormFieldType.ListBox;
+                    bound = new Bound() { X = x, Y = y, Width = 200, Height = 66 };
+                    break;
+            }
+            field.CustomData = new Dictionary<string, string>
+            {
+                { "Author", dropdownValue }
+            };
+            if (bound.X + bound.Width >= PageWidth)
+            {
+                bound.X = PageWidth - bound.Width - 10;
+            }
+            field.Bounds = bound;
+            formFields.Add(field);
+            IsFieldDropped = false;
+            await Viewer.AddFormFieldsAsync(formFields);
+        }
+    }
+
+
+
+    private static List<EmployeeData> Data = new List<EmployeeData>
+    {
+        new EmployeeData() { FirstName = "Andrew Fuller", Email = "andrew@mycompany.com", Eimg = "1", Color = "red"},
+        new EmployeeData() { FirstName = "Anne Dodsworth", Email = "anne@mycompany.com", Eimg = "2", Color = "green" },
+    };
+
+    [JSInvokable]
+    public double GetZoomValue() => Viewer!.ZoomValue / 100.0;
+
+    [JSInvokable]
+    public void UpdateIsDropped(bool IsDropped, string fieldType) {
+        IsFieldDropped = IsDropped;
+        CurrentFormFieldType = fieldType;
+    }
+    private async Task Download()
+    {
+        if (Viewer != null)
+            await Viewer.DownloadAsync();
+    }
+
+    private async Task OnDocumentLoaded(LoadEventArgs args)
+    {
+        if (module != null)
+        {
+            await module.InvokeVoidAsync("documentLoaded");
+        }
+        PageData = args.PageData.PageSizes;
+    }
+    
+ }
+@*Hidden:Lines*@ 
+<style>
+
+    #e-pv-e-sign-download {
+        width: 115px;
+        height: 32px;
+        min-height: 0;
+        flex-shrink: 0;
+        border-radius: 16px;
+        border: 1px solid var(--Color-variables-outline, #79747E);
+    }
+
+    .e-pv-fields {
+        margin-left: 2px;
+    }
+    .e-bigger  #e-pv-e-sign-download {
+        font-size: 14px;
+        padding: 2px;
+    }
+    .e-pv-e-sign-control {
+       font-family: Roboto;
+       font-size: 14px;
+       font-style: normal;
+       font-weight: 400;
+       letter-spacing: 0.24px;
+       padding-top: 20px;
+       margin-top: 0px !important;
+    }
+    #e-pv-e-sign-toolbar_template {
+        z-index: 999;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+    }
+    #e-pv-e-sign-toolbar_template.e-toolbar .e-toolbar-items .e-toolbar-left .e-toolbar-item:first-child {
+        margin-left: 0px !important;
+        padding: 0px !important;
+    }
+    #e-pv-e-sign-defaultSidebar_user {
+        height: 638px;
+        position: absolute;
+        box-shadow: 0px 2px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30);
+    }
+
+    .e-bigger #e-pv-e-sign-defaultSidebar_user {
+        width: 215px !important;
+    }
+
+    #e-pv-e-sign-user-field {
+        color: #222933;
+        font-family: Heebo, open sans, 'sans-serif', -apple-system, BlinkMacSystemFont;
+        display: flex;
+        position: relative;
+        padding-bottom: 3px;
+        margin: 5px 0px 20px;
+        border-radius: 4px;
+        border: 1px solid #C4C7C5;
+        z-index: 1000;
+    }
+    .e-bigger #e-pv-e-sign-user-field {
+        width: 205px !important;
+    }
+    #e-pv-e-sign-user-field-mob {
+        color: #222933;
+        font-family: Heebo, open sans, 'sans-serif', -apple-system, BlinkMacSystemFont;
+        display: flex;
+        position: relative;
+        padding-bottom: 3px;
+        margin: 5px 0px 20px;
+        z-index: 1000;
+    }
+    #e-pv-e-sign-user-field .e-input-group .e-input-group-icon:last-child {
+        margin-left: -16px !important;
+        padding: 0;
+    }
+    .e-pv-e-sign-user-dropdown > :first-child {
+        border: none !important;
+    }
+
+    .e-bigger .e-pv-e-sign-user-dropdown {
+        width: 205px !important;
+    }
+
+    .e-pv-e-sign-user-dropdown .e-input-group:not(.e-float-icon-left):not(.e-float-input).e-input-focus::before,
+    .e-pv-e-sign-user-dropdown .e-input-group:not(.e-float-icon-left):not(.e-float-input).e-input-focus::after {
+        width: 0px !important;
+    }
+    .e-pv-e-sign-empImage {
+        width: 32px;
+        height: 32px;
+        margin-top: 7px;
+        margin-left: 4px;
+        border-radius: 50%;
+    }
+    .e-bigger .e-pv-e-sign-empImage {
+        margin: 13px 0px 0px 12px !important;
+    }
+
+    .e-pv-e-sign-property {
+        width: 72px !important;
+        height: 72px !important;
+        margin: 9px;
+        border: 1px solid #C4C7C5 !important;
+        border-radius: 8px;
+        display: grid;
+        font-size: 12px !important;
+        place-content: center;
+    }
+    .e-bigger:not(.fluent2-highcontrast):not(.highcontrast) .e-pv-e-sign-property {
+        margin-left: 15px;
+    }
+
+    #pdf-viewer {  
+       flex: 1; 
+       display: flex; 
+       height: 640px;
+       flex-direction: column;
+       width: calc(100% - 200px);
+       overflow: hidden;
+     }
+      #pdf-viewer-mob {
+          flex: 1; 
+      }
+
+</style>
+@*End:Hidden*@ 
