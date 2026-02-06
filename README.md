@@ -1,4 +1,4 @@
-# Syncfusion® Blazor PDF Viewer SDK Demos 
+# Syncfusion® Blazor PDF Viewer SDK Demos   
 This repository contains the demos of Syncfusion® Blazor [**PDF Viewer**](https://www.syncfusion.com/pdf-viewer-sdk/blazor-pdf-viewer) and [**Smart PDF Viewer**](https://www.syncfusion.com/pdf-viewer-sdk/blazor-smart-pdf-viewer) Component samples.
 The following topics can help you to use the Syncfusion Blazor PDF Viewer and Smart PDF Viewer Components and run this application in your local. 
 * [Requirements to run the demo](#requirements-to-run-the-demo)
