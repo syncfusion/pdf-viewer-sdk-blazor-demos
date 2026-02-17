@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -753,6 +753,12 @@
   <data name="FileManager_ServerError" xml:space="preserve">
     <value>ServerError: Ungültige Antwort von</value>
   </data>
+  <data name="FileManager_File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="FileManager_Folder" xml:space="preserve">
+    <value>Ordner</value>
+  </data>  
   <data name="Slider_DecrementTitle" xml:space="preserve">
     <value>erhöhen</value>
   </data>
@@ -1907,6 +1913,12 @@
   </data>
   <data name="Schedule_Year" xml:space="preserve">
     <value>Jahr</value>
+  </data>
+  <data name="Schedule_YearLabel" xml:space="preserve">
+    <value>Eine Übersicht, die alle Tage des Jahres anzeigt</value>
+  </data>
+  <data name="Schedule_MoreEventPopupLabel" xml:space="preserve">
+    <value>Alle Ereignisse von {0} in einer Popup-Ansicht</value>
   </data>
   <data name="PivotView_AddCondition" xml:space="preserve">
     <value>Bedingung hinzufügen</value>
@@ -3704,6 +3716,15 @@
   </data>
   <data name="RichTextEditor_Default" xml:space="preserve">
     <value>Standard</value>
+  </data>
+  <data name="RichTextEditor_Checklist" xml:space="preserve">
+    <value>Checkliste</value>
+  </data>
+  <data name="RichTextEditor_SlashMenuCheckList" xml:space="preserve">
+    <value>Checkliste</value>
+  </data>
+  <data name="RichTextEditor_SlashMenuChecklistDescription" xml:space="preserve">
+    <value>Checkliste hinzufügen</value>
   </data>
   <data name="DiagramComponent_X" xml:space="preserve">
     <value>X</value>
@@ -9053,5 +9074,23 @@
   </data>
   <data name="BlockEditor_CodeCopyTooltip" xml:space="preserve">
     <value>Code kopieren</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseHeader" xml:space="preserve">
+    <value>Nicht gespeicherte Kommentare</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseContent" xml:space="preserve">
+    <value>Sie haben Kommentare, die noch nicht gepostet wurden. Wenn Sie diese Seite verlassen, werden sie verworfen</value>
+  </data>
+  <data name="DocumentEditorContainer_KeepEditing" xml:space="preserve">
+    <value>Bearbeiten Sie weiter</value>
+  </data>
+  <data name="DocumentEditorContainer_DiscardComments" xml:space="preserve">
+    <value>Kommentare verwerfen</value>
+  </data>
+  <data name="DocumentEditor_Resolved" xml:space="preserve">
+    <value>Gelöst</value>
+  </data>
+  <data name="DocumentEditor_ClickToSeeThisComment" xml:space="preserve">
+    <value>Klicken Sie hier, um diesen Kommentar anzuzeigen</value>
   </data>
 </root>

@@ -1,1 +1,1 @@
-export const data={"version":"net10.0","configuration":"Debug"}
+export const data={"version":"net8.0","configuration":"Debug"}

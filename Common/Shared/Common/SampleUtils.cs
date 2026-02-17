@@ -1,5 +1,5 @@
-#region Copyright SyncfusionÂ® Inc. 2001-2026.
-// Copyright SyncfusionÂ® Inc. 2001-2026. All rights reserved.
+#region Copyright Syncfusion® Inc. 2001-2026.
+// Copyright Syncfusion® Inc. 2001-2026. All rights reserved.
 // Use of this code is subject to the terms of our license.
 // A copy of the current license can be obtained at any time by e-mailing
 // licensing@syncfusion.com. Any infringement will be prosecuted under
@@ -237,7 +237,6 @@ namespace BlazorDemos.Shared
             new DropDownData { ID = "material", Text = "Material" },
 #endif
             new DropDownData { ID = "material3", Text = "Material 3" },
-            new DropDownData { ID = "fluent", Text = "Fluent" },
             new DropDownData { ID = "fluent2", Text = "Fluent 2" },
 #if RELEASE && STAGING
             new DropDownData { ID = "bootstrap4", Text = "Bootstrap v4" },
@@ -254,8 +253,8 @@ namespace BlazorDemos.Shared
 #endif
 #if RELEASE && STAGING
            new DropDownData { ID = "fabric", Text = "Fabric" },
+           new DropDownData { ID = "highcontrast", Text = "High Contrast" },
 #endif
-            new DropDownData { ID = "highcontrast", Text = "High Contrast" },
             new DropDownData { ID = "fluent2-highcontrast", Text = "Fluent 2 High Contrast" },
         };
 

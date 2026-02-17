@@ -645,6 +645,12 @@
   <data name="Schedule_Year" xml:space="preserve">
     <value>Year</value>
   </data>
+  <data name="Schedule_YearLabel" xml:space="preserve">
+    <value>An overview showing all the days in the year</value>
+  </data>
+  <data name="Schedule_MoreEventPopupLabel" xml:space="preserve">
+    <value>All events from {0} in a popup view</value>
+  </data>
   <data name="Slider_DecrementTitle" xml:space="preserve">
     <value>Decrease</value>
   </data>
@@ -5541,6 +5547,12 @@ Access to system clipboard through script is denied due to browsers security pol
   <data name="FileManager_ServerError" xml:space="preserve">
     <value>ServerError: Invalid response from</value>
   </data>
+  <data name="FileManager_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FileManager_Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
   <data name="Gantt_Above" xml:space="preserve">
     <value>Above</value>
   </data>
@@ -8796,6 +8808,9 @@ Access to system clipboard through script is denied due to browsers security pol
   <data name="RichTextEditor_SlashMenuUnorderedList" xml:space="preserve">
     <value>Unordered List</value>
   </data>
+  <data name="RichTextEditor_CheckList" xml:space="preserve">
+    <value>Checklist</value>
+  </data>
   <data name="RichTextEditor_SlashMenuCheckList" xml:space="preserve">
     <value>Checklist</value>
   </data>
@@ -9104,5 +9119,23 @@ Access to system clipboard through script is denied due to browsers security pol
   </data>
   <data name="BlockEditor_CodeCopyTooltip" xml:space="preserve">
     <value>Copy code</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseHeader" xml:space="preserve">
+    <value>Unsaved comments</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseContent" xml:space="preserve">
+    <value>You have comments that haven't been posted yet. If you leave this page, they'll be discarded</value>
+  </data>
+  <data name="DocumentEditorContainer_KeepEditing" xml:space="preserve">
+    <value>Keep editing</value>
+  </data>
+  <data name="DocumentEditorContainer_DiscardComments" xml:space="preserve">
+    <value>Discard comments</value>
+  </data>
+  <data name="DocumentEditor_Resolved" xml:space="preserve">
+    <value>Resolved</value>
+  </data>
+  <data name="DocumentEditor_ClickToSeeThisComment" xml:space="preserve">
+    <value>Click to see this comment</value>
   </data>
 </root>

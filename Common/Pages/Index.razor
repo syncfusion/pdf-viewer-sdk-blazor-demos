@@ -13,6 +13,7 @@
 
     protected override void OnInitialized()
     {
+#if !NET8_0
         if (SampleBrowser.SampleList != null && SampleBrowser.SampleList.Count > 0)
         {
             var firstSample = SampleBrowser.SampleList[0];
@@ -24,11 +25,28 @@
             UriHelper.NavigateTo(newUri, true);
             return;
         }
+#endif
         base.OnInitialized();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+#if NET8_0
+        if (firstRender)
+        {
+            if (SampleBrowser.SampleList != null && SampleBrowser.SampleList.Count > 0)
+            {
+                var firstSample = SampleBrowser.SampleList[0];
+                
+                string path = firstSample.DemoPath;
+                var newUri = UriHelper.GetUriWithQueryParameters(path, new Dictionary<string, object?>{
+                    ["theme"] = "fluent2"
+                });
+                UriHelper.NavigateTo(newUri, true);
+                return;
+            }
+        }
+#endif
         await base.OnAfterRenderAsync(firstRender);
         // await for mobile or desktop rendering.
         await Task.Delay(500);

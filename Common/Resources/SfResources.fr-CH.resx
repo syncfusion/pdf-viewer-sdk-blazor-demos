@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -747,6 +747,12 @@
   <data name="FileManager_ServerError" xml:space="preserve">
     <value>ServerError: réponse non valide de</value>
   </data>
+  <data name="FileManager_File" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="FileManager_Folder" xml:space="preserve">
+    <value>Dossier</value>
+  </data>  
   <data name="Slider_DecrementTitle" xml:space="preserve">
     <value>diminuer</value>
   </data>
@@ -2739,6 +2745,12 @@
   <data name="Schedule_Year" xml:space="preserve">
     <value>Année</value>
   </data>
+  <data name="Schedule_YearLabel" xml:space="preserve">
+    <value>Un aperçu de tous les jours de l'année</value>
+  </data>
+  <data name="Schedule_MoreEventPopupLabel" xml:space="preserve">
+    <value>Tous les événements de {0} dans une vue pop-up</value>
+  </data>
   <data name="Tab_CloseButtonTitle" xml:space="preserve">
     <value>Fermer</value>
   </data>
@@ -3746,6 +3758,15 @@
   </data>
   <data name="RichTextEditor_Default" xml:space="preserve">
     <value>Par défaut</value>
+  </data>
+  <data name="RichTextEditor_Checklist" xml:space="preserve">
+    <value>Liste de contrôle</value>
+  </data>
+  <data name="RichTextEditor_SlashMenuCheckList" xml:space="preserve">
+    <value>Liste de contrôle</value>
+  </data>
+  <data name="RichTextEditor_SlashMenuChecklistDescription" xml:space="preserve">
+    <value>Ajouter une liste de contrôle</value>
   </data>
   <data name="PdfViewer" xml:space="preserve">
     <value>Visionneuse PDF</value>
@@ -9050,5 +9071,23 @@
   </data>
   <data name="BlockEditor_CodeCopyTooltip" xml:space="preserve">
       <value>Copier le code</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseHeader" xml:space="preserve">
+    <value>Commentaires non enregistrés</value>
+  </data>
+  <data name="DocumentEditorContainer_CommentsCloseContent" xml:space="preserve">
+    <value>Vous avez des commentaires qui n'ont pas encore été publiés. Si vous quittez cette page, ils seront supprimés</value>
+  </data>
+  <data name="DocumentEditorContainer_KeepEditing" xml:space="preserve">
+    <value>Continuer à éditer</value>
+  </data>
+  <data name="DocumentEditorContainer_DiscardComments" xml:space="preserve">
+    <value>Supprimer les commentaires</value>
+  </data>
+  <data name="DocumentEditor_Resolved" xml:space="preserve">
+    <value>Résolu</value>
+  </data>
+  <data name="DocumentEditor_ClickToSeeThisComment" xml:space="preserve">
+    <value>Cliquez pour voir ce commentaire</value>
   </data>
 </root>

@@ -82,7 +82,7 @@ function populateVoiceList() {
 
 async function speakFromControls(input, voiceUri) {
     // iOS/iPadOS: require user-gesture unlock and stable voice list
-    await ensureTtsUnlocked().catch(() => { });
+    // await ensureTtsUnlocked().catch(() => { });
     await voicesReady;
 
     const t = (typeof input === 'string' ? input.trim() : (input?.value || '').trim());
@@ -97,10 +97,6 @@ async function speakFromControls(input, voiceUri) {
 
     utterThis.onend = function () {
         console.log("SpeechSynthesisUtterance.onend");
-    };
-
-    utterThis.onerror = function (e) {
-        console.error("SpeechSynthesisUtterance.onerror", e);
     };
 
     const available = speechSynthesis.getVoices();
