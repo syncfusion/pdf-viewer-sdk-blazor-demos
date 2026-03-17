@@ -1,0 +1,44 @@
+﻿@namespace BlazorDemos.Shared
+
+@inject SampleService SampleService;
+
+<div class=@SampleUtils.AdContainer>
+    <div class=@SampleUtils.AdContent>
+        <div class=@SampleUtils.AdHeader>Transform your Blazor web apps today with Syncfusion<sup>&reg;</sup> Blazor components</div>
+        <div class=@SampleUtils.AdPointsDiv>
+            @foreach(var ad in adpoints!)
+            {
+                <div class=@SampleUtils.AdPointDiv>
+                    <div class=@SampleUtils.AdPointTick></div>
+                    <div class=@SampleUtils.AdPointText>@ad.AdPointText</div>
+                </div>
+            }
+        </div>
+    </div>
+    <a class=@SampleUtils.AdLink href="https://www.syncfusion.com/downloads/pdf-viewer-sdk?tag=es-seo-pdf-viewer-sdk-download-trial" target="_blank" rel="noopener" aria-label="Downloads">
+        <div class=@SampleUtils.AdTry>
+            TRY IT FOR FREE
+        </div>
+    </a>
+</div>
+
+<style>
+    .sb-ad-container {
+        background: url( @(SampleService.ImagePath + "ad-bg.webp") );
+    }
+</style>
+
+@code {
+    private List<AdPoint>? adpoints;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        adpoints = new List<AdPoint>()
+        {
+            new AdPoint("100+ high-performance and responsive UI components"),
+            new AdPoint("Dedicated support"),
+            new AdPoint("Hassle-free licensing")
+        };
+    }
+}
