@@ -1,0 +1,82 @@
+@page "/handwritten-signature"
+@using Syncfusion.Blazor.SfPdfViewer
+@using Syncfusion.Blazor.Spinner
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@*End:Hidden*@
+
+<SampleDescription>
+    <p>This sample demonstrates handwritten signature support in the <strong>SfPdfViewer</strong>. Handwritten signatures streamline document reviews and provide a form of digital verification. Use the built-in dialog to add signatures directly to the PDF, reducing paperwork and improving review efficiency.</p>
+</SampleDescription>
+<ActionDescription>
+    <p>This sample demonstrates how to add handwritten signatures to PDF documents using the Blazor PDF Viewer. Handwritten signatures streamline document reviews and provide a form of digital verification for signing documents electronically.</p>
+
+    <p><strong>Key Features</strong></p>
+    <ul>
+        <li><strong>Open signature dialog</strong> - Use <code>SetAnnotationModeAsync(AnnotationType.HandWrittenSignature)</code> to activate signature mode</li>
+        <li><strong>Draw handwritten signatures</strong> - Capture digital signatures directly on the PDF document using mouse or touch input</li>
+        <li><strong>Signature customization</strong> - Configure stroke color, width, and opacity using <code>PdfViewerHandwrittenSignatureSettings</code></li>
+        <li><strong>Clear and redo</strong> - Clear incorrect strokes and redo signature drawing within the dialog</li>
+        <li><strong>Save signatures</strong> - Save handwritten signatures to the document and download with <code>DownloadAsync()</code></li>
+        <li><strong>Multiple signatures</strong> - Add handwritten signatures at multiple locations on different pages</li>
+    </ul>
+
+    <p><strong>Documentation Links</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/hand-written-signature">Handwritten Signature Overview</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/annotation/overview">Annotations</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/saving-pdf-file">Download PDF</a></li>
+    </ul>
+
+    <p><strong>More Resources</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/web-assembly-application">Getting Started - Blazor WASM</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/server-side-application">Getting Started - Blazor Server</a></li>
+        <li><a target="_blank" href="https://www.syncfusion.com/pdf-viewer-sdk/blazor-pdf-viewer">Blazor PDF Viewer Overview</a></li>
+    </ul>
+</ActionDescription>
+
+<div class="control-section">
+    <SfSpinner Size="40" Type="SpinnerType.Bootstrap5" Visible="isSpinnerVisible"></SfSpinner>
+    <div class="pdf-viewer-shell @(pdfReady ? "visible" : "")">
+     <SfPdfViewer2 @ref="PdfViewerInstance" DocumentPath="@DocumentPath" Height="640px" Width="100%">
+        <PdfViewerHandwrittenSignatureSettings StrokeColor="blue"></PdfViewerHandwrittenSignatureSettings>
+        <PdfViewerEvents DocumentLoaded="DocumentLoad"></PdfViewerEvents>
+    </SfPdfViewer2>
+    </div>
+</div>
+
+@code {
+    private string DocumentPath { get; set; } = string.Empty;
+    SfPdfViewer2? PdfViewerInstance { get; set; }
+    private bool pdfReady = false;
+    private bool isSpinnerVisible = true;
+    protected override void OnInitialized()
+    {
+        
+        string fileDataPath = NavigationManager.BaseUri + SampleService?.WebAssetsPath;
+
+@*Server:Block*@
+#if !WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath = "wwwroot/data/pdfviewer/handwritten-signature.pdf";
+#endif
+@*End:Server*@
+
+@*WebAssembly:Block*@
+#if WASM
+        //Sets the PDF document path for initial loading.   
+        DocumentPath= fileDataPath + "data/pdfviewer/handwritten-signature.pdf";
+#endif
+@*End:WebAssembly*@
+    }
+ 
+    public async void DocumentLoad(LoadEventArgs args)
+    {
+        isSpinnerVisible = false;
+        pdfReady = true;
+        await PdfViewerInstance!.SetAnnotationModeAsync(AnnotationType.HandWrittenSignature);
+    }
+}
+

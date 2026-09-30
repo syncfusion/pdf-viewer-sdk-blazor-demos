@@ -1,0 +1,115 @@
+@page "/redaction"
+
+@using Syncfusion.Blazor.SfPdfViewer
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Spinner
+@inject IJSRuntime JSRuntime
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@*End:Hidden*@
+<SampleDescription>
+    <p>This sample demonstrates redaction annotations in the PDF Viewer, which allow you to permanently remove sensitive or confidential content from PDF documents. Use the built-in redaction workflow to mark, apply, and save changes securely, all within the viewer interface.</p>
+</SampleDescription>
+<ActionDescription>
+    <p>This sample demonstrates the redaction feature of the PDF Viewer, which lets users permanently remove sensitive or confidential information from PDF files. Users can select redaction areas on one or multiple pages, customize the redaction properties, then apply redaction to permanently remove the marked content and reload the updated document into the viewer.</p>
+
+    <p><strong>Key Features</strong></p>
+    <ul>
+        <li>Add redaction annotations to mark sensitive content for removal</li>
+        <li>Customize redaction annotation properties including color and opacity</li>
+        <li>Redact content across one or multiple pages simultaneously</li>
+        <li>Permanently remove marked content by applying redaction</li>
+        <li>Reload the redacted document into the PDF Viewer after applying redaction</li>
+        <li>Redaction toolbar accessible via <code>ShowRedactionToolbar()</code> method</li>
+        <li>Apply redaction programmatically using <code>RedactAsync()</code> API</li>
+    </ul>
+
+    <p><strong>Documentation Links</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/annotation/redaction-annotation">Redaction Annotations</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/annotation/overview">Annotations Overview</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/toolbar-customization/primary-toolbar">Toolbar Customization</a></li>
+    </ul>
+
+    <p><strong>More Resources</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/web-assembly-application">Getting Started - Blazor WASM</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/server-side-application">Getting Started - Blazor Server</a></li>
+        <li><a target="_blank" href="https://www.syncfusion.com/pdf-viewer-sdk/blazor-pdf-viewer">Blazor PDF Viewer Overview</a></li>
+    </ul>
+</ActionDescription>
+
+<div class="control-section">
+    <SfSpinner Size="40" Type="SpinnerType.Bootstrap5" Visible="isSpinnerVisible"></SfSpinner>
+    <div class="pdf-viewer-shell @(pdfReady ? "visible" : "")">
+        <SfPdfViewer2 @ref="SfPdfViewer2" Height="640px" Width="100%" DocumentPath="@DocumentPath">
+            <PdfViewerToolbarSettings ToolbarItems="ToolbarItems" MobileToolbarItems="MobileToolbarItems"></PdfViewerToolbarSettings>
+            <PdfViewerEvents DocumentLoaded="DocumentLoaded"></PdfViewerEvents>
+        </SfPdfViewer2>
+    </div>
+</div>
+
+@code {
+
+    SfPdfViewer2? SfPdfViewer2;
+    bool redactionToolbar;
+    private string DocumentPath { get; set; } = string.Empty;
+    public List<ToolbarItem>? ToolbarItems { get; set; }
+    public List<MobileToolbarItem>? MobileToolbarItems { get; set; }
+    private bool pdfReady = false;
+    private bool isSpinnerVisible = true;
+
+    private void DocumentLoaded(LoadEventArgs args)
+    {
+        isSpinnerVisible = false;
+        pdfReady = true;
+        redactionToolbar = true;
+        SfPdfViewer2?.ShowRedactionToolbar(redactionToolbar);
+    }
+
+    protected override void OnInitialized()
+    {
+
+        string fileDataPath = NavigationManager.BaseUri + SampleService?.WebAssetsPath;
+        @*Server:Block*@
+#if !WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath = "wwwroot/data/pdfviewer/redaction.pdf";
+#endif
+        @*End:Server*@
+
+        @*WebAssembly:Block*@
+#if WASM
+        //Sets the PDF document path for initial loading.   
+        DocumentPath= fileDataPath + "data/pdfviewer/redaction.pdf";
+#endif
+        @*End:WebAssembly*@
+        ToolbarItems = new List<ToolbarItem>(){
+        ToolbarItem.OpenOption,
+        ToolbarItem.PageNavigationTool,
+        ToolbarItem.MagnificationTool,
+        ToolbarItem.SelectionTool,
+        ToolbarItem.PanTool,
+        ToolbarItem.UndoRedoTool,
+        ToolbarItem.CommentTool,
+        ToolbarItem.SubmitForm,
+        ToolbarItem.SearchOption,
+        ToolbarItem.AnnotationEditTool,
+        ToolbarItem.Redaction,
+        ToolbarItem.FormDesigner,
+        ToolbarItem.PrintOption,
+        ToolbarItem.DownloadOption
+        };
+        MobileToolbarItems = new List<MobileToolbarItem>()
+        {
+            MobileToolbarItem.Open,
+            MobileToolbarItem.UndoRedo,
+            MobileToolbarItem.EditAnnotation,
+            MobileToolbarItem.Redaction,
+            MobileToolbarItem.FormDesigner,
+            MobileToolbarItem.Search
+        };
+
+    }
+}

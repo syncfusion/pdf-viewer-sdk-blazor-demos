@@ -1,0 +1,103 @@
+@page "/read-only"
+@using Syncfusion.Blazor.SfPdfViewer
+@using Syncfusion.Blazor.Spinner
+@*Hidden:Lines*@
+@inherits SampleBaseComponent
+@inject NavigationManager NavigationManager
+@*End:Hidden*@
+
+<SampleDescription>
+    <p>This sample demonstrates the PDF Viewer operating in read-only mode. In this mode, annotations cannot be edited, form fields are restricted from modification, and text selection is disabled. Use this configuration to prevent unintended changes while still allowing users to view the document content.</p>
+</SampleDescription>
+<ActionDescription>
+    <p>
+        This sample showcases the PDF Viewer operating in read-only mode, which restricts the ability to make changes to annotations and form fields. Annotations are locked, form fields are set to read-only, the annotation toolbar and sticky notes are disabled, the context menu is hidden, page organization is disabled, and download is disabled, while still allowing viewing, navigation, zooming and printing.
+    </p>
+
+    <p><strong>Key Features</strong></p>
+    <ul>
+        <li>Read-only mode with locked annotations via <code>PdfViewerAnnotationSettings</code></li>
+        <li>All form fields set to read-only programmatically using <code>IsReadOnly</code> property</li>
+        <li>Annotation toolbar and sticky notes annotations disabled</li>
+        <li>Text selection disabled to prevent content copying</li>
+        <li>Page Organizer disabled to prevent page rearrangement</li>
+        <li>Comment panel hidden to restrict feedback</li>
+        <li>Customized toolbar with Open, Page Navigation, Magnification, Pan, and Print items only</li>
+    </ul>
+
+    <p><strong>Documentation Links</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/annotation/annotation-permission">Annotation Permission</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/forms/manage-form-fields">Form Field Settings</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/toolbar-customization/primary-toolbar">Toolbar Customization</a></li>
+    </ul>
+
+    <p><strong>More Resources</strong></p>
+    <ul>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/web-assembly-application">Getting Started - Blazor WASM</a></li>
+        <li><a target="_blank" href="https://help.syncfusion.com/document-processing/pdf/pdf-viewer/blazor/getting-started/server-side-application">Getting Started - Blazor Server</a></li>
+        <li><a target="_blank" href="https://www.syncfusion.com/pdf-viewer-sdk/blazor-pdf-viewer">Blazor PDF Viewer Overview</a></li>
+    </ul>
+</ActionDescription>
+
+<div class="control-section">
+    <SfSpinner Size="40" Type="SpinnerType.Bootstrap5" Visible="isSpinnerVisible"></SfSpinner>
+    <div class="pdf-viewer-shell @(pdfReady ? "visible" : "")">
+        <SfPdfViewer2 @ref="PdfViewerInstance" DocumentPath="@DocumentPath" Height="90%" Width="100%" EnableTextSelection="false" EnableStickyNotesAnnotation=false EnableCommentPanel="false" EnableFormDesigner = "true" EnablePageOrganizer="false">
+            <PdfViewerAnnotationSettings IsLock="true"></PdfViewerAnnotationSettings>
+            <PdfViewerToolbarSettings ToolbarItems="@ToolbarItems" MobileToolbarItems="@MobileToolbarItems" />
+            <PdfViewerEvents DocumentLoaded="OnDocumentLoad"></PdfViewerEvents>
+        </SfPdfViewer2>
+    </div>
+</div>
+
+@code {
+    SfPdfViewer2? PdfViewerInstance;
+    private bool pdfReady = false;
+    private bool isSpinnerVisible = true;
+    private async Task OnDocumentLoad(LoadEventArgs args)
+    {
+        isSpinnerVisible = false;
+        pdfReady = true;
+        List<FormFieldInfo> fields = await PdfViewerInstance!.GetFormFieldsAsync();
+        for (int i = 0; i < fields.Count(); i++)
+        {
+            fields[i].IsReadOnly = true;
+        }
+        await PdfViewerInstance.UpdateFormFieldsAsync(fields);
+    }
+    public List<ToolbarItem> ToolbarItems { get; } = new()
+    {
+        ToolbarItem.OpenOption,
+        ToolbarItem.PageNavigationTool,
+        ToolbarItem.MagnificationTool,
+        ToolbarItem.PrintOption,
+    };
+
+    public List<MobileToolbarItem> MobileToolbarItems { get; } = new()
+    {
+        MobileToolbarItem.Open,
+        MobileToolbarItem.Search
+    };
+
+    //Invokes while loading document in the PDFViewer.    
+    private string DocumentPath { get; set; } = string.Empty;
+    protected override void OnInitialized()
+    {
+        string fileDataPath = NavigationManager.BaseUri + SampleService?.WebAssetsPath;
+
+        @*Server:Block*@
+#if !WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath = "wwwroot/data/pdfviewer/restricted-formfield.pdf";
+#endif
+        @*End:Server*@
+
+        @*WebAssembly:Block*@
+#if WASM
+        //Sets the PDF document path for initial loading.
+        DocumentPath= fileDataPath + "data/pdfviewer/restricted-formfield.pdf";
+#endif
+        @*End:WebAssembly*@
+    }
+}
